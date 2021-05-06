@@ -5,6 +5,8 @@ module spck.core {
 	requires org.lwjgl.opengl.natives;
 	requires transitive org.lwjgl.glfw;
 	requires org.lwjgl.glfw.natives;
+	requires org.lwjgl.shaderc;
+	requires org.lwjgl.shaderc.natives;
 	requires org.joml;
 	requires org.slf4j;
 
@@ -12,4 +14,5 @@ module spck.core {
 	exports spck.core.input;
   exports spck.core.props;
   exports spck.core.props.type;
+  exports spck.core.render;
 }

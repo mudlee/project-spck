@@ -3,7 +3,7 @@ package spck.sandbox;
 import spck.core.Application;
 import spck.core.props.Preferences;
 
-public class Sandbox {
+public class SandboxApplication {
   public static void main(String[] args) {
     final var prefs = new Preferences();
 

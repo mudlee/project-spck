@@ -4,16 +4,16 @@ import org.joml.Vector4f;
 import spck.core.Spck;
 import spck.core.props.Preferences;
 import spck.core.SpckRuntimeException;
-import spck.core.vendor.opengl.OpenGLTypes;
+import spck.core.vendor.opengl.type.OpenGLTypes;
 import spck.core.vendor.opengl.OpenGLGraphicsContext;
 import spck.core.window.WindowEventListener;
 
 public class Renderer implements WindowEventListener {
+  public static Preferences.RendererBackend backend;
   private final GraphicsContext context;
-  private final Preferences.RendererBackend backend; // TODO
 
   public Renderer(Preferences.RendererBackend backend, boolean debug) {
-    this.backend = backend;
+    Renderer.backend = backend;
 
     switch (backend) {
       case OPENGL:

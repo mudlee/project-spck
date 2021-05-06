@@ -45,7 +45,7 @@ public class Application {
     long lastTime = System.nanoTime();
 
     renderer.setClearColor(new Vector4f(1f, 1f, 1f, 1f));
-    renderer.setClearFlags(Spck.types.bufferBit.color);
+    renderer.setClearFlags(Spck.types.bufferBit.COLOR);
 
     while (!window.shouldClose()) {
       renderer.clear();
