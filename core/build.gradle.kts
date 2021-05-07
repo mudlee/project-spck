@@ -9,6 +9,7 @@ plugins {
 val lwjglVersion = "3.3.0-SNAPSHOT"
 val jomlVersion = "1.10.1"
 val slf4jVersion = "1.8.0-beta4"
+val artemisVersion = "2.3.0"
 val resourcesPath = "../resources"
 
 val currentOs: DefaultOperatingSystem = DefaultNativePlatform.getCurrentOperatingSystem()
@@ -51,12 +52,11 @@ dependencies {
     implementation("org.lwjgl", "lwjgl")
     api("org.lwjgl", "lwjgl-glfw")
     implementation("org.lwjgl", "lwjgl-opengl")
-    implementation("org.lwjgl", "lwjgl-shaderc")
     implementation("org.lwjgl", "lwjgl", classifier = lwjglNatives)
     implementation("org.lwjgl", "lwjgl-glfw", classifier = lwjglNatives)
     implementation("org.lwjgl", "lwjgl-opengl", classifier = lwjglNatives)
-    implementation("org.lwjgl", "lwjgl-shaderc", classifier = lwjglNatives)
-    implementation("org.joml", "joml", jomlVersion)
+    api("net.onedaybeard.artemis","artemis-odb", artemisVersion)
+    api("org.joml", "joml", jomlVersion)
     implementation("org.slf4j", "slf4j-api", slf4jVersion)
     implementation("org.slf4j", "slf4j-simple", slf4jVersion)
 }

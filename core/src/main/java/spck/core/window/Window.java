@@ -12,6 +12,7 @@ import spck.core.Disposable;
 import spck.core.props.Preferences;
 
 import java.nio.IntBuffer;
+import java.util.List;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -22,14 +23,14 @@ public class Window implements Disposable {
   private static final Logger log = LoggerFactory.getLogger(Window.class);
   private final Vector2i size = new Vector2i();
   private final Preferences preferences;
-  private final WindowEventListener listener;
+  private final List<WindowEventListener> listeners;
   private GLFWVidMode videoMode;
   private long id;
   private int screenPixelRatio;
 
-  public Window(Preferences preferences, WindowEventListener listener) {
+  public Window(Preferences preferences, List<WindowEventListener> listeners) {
     this.preferences = preferences;
-    this.listener = listener;
+    this.listeners = listeners;
     size.set(preferences.windowSize);
   }
 
@@ -58,7 +59,7 @@ public class Window implements Disposable {
       glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
     }
 
-    listener.onWindowPrepared();
+    listeners.forEach(WindowEventListener::onWindowPrepared);
 
     id = glfwCreateWindow(size.x, size.y, preferences.title, preferences.fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
 
@@ -66,7 +67,7 @@ public class Window implements Disposable {
       throw new RuntimeException("Error creating GLFW window");
     }
 
-    listener.onWindowCreated(id, size.x, size.y, preferences.vSync);
+    listeners.forEach(listener -> listener.onWindowCreated(id, size.x, size.y, preferences.vSync));
 
     glfwSetFramebufferSizeCallback(id, this::framebufferResized);
     calculateScreenPixelRatio();
@@ -109,6 +110,10 @@ public class Window implements Disposable {
     Objects.requireNonNull(glfwSetErrorCallback(null)).free();
   }
 
+  public Vector2i getSize() {
+    return size;
+  }
+
   private GLFWVidMode pickMonitor() {
     final var buffer = glfwGetMonitors();
 
@@ -130,9 +135,9 @@ public class Window implements Disposable {
 
   private void framebufferResized(long window, int width, int height) {
     size.set(width, height);
-    listener.onWindowResized(width, height);
+    listeners.forEach(listener -> listener.onWindowResized(width, height));
     calculateScreenPixelRatio();
-    log.debug("Framebuffer size change to {}x{}", width, height);
+    log.trace("Framebuffer size change to {}x{}", width, height);
   }
 
   private void calculateScreenPixelRatio() {

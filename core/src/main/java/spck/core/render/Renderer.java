@@ -40,6 +40,10 @@ public class Renderer implements WindowEventListener {
     context.windowResized(width, height);
   }
 
+  public void renderRaw(VertexArray vao, Shader shader) {
+    context.renderRaw(vao, shader);
+  }
+
   public void setClearColor(Vector4f color) {
     context.setClearColor(color);
   }

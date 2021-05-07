@@ -60,6 +60,7 @@ public class OpenGLVertexArray extends VertexArray {
 		}
 		buffer.unbind();
 		unbind();
+		vertexBuffers.add(buffer);
 	}
 
 	@Override
@@ -68,7 +69,7 @@ public class OpenGLVertexArray extends VertexArray {
 		bind();
 		buffer.bind();
 		unbind();
-		this.indexBuffer = buffer;
+		indexBuffer = buffer;
 	}
 
 	@Override

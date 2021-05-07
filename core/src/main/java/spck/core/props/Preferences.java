@@ -1,6 +1,10 @@
 package spck.core.props;
 
+import com.artemis.BaseSystem;
 import org.joml.Vector2i;
+
+import java.util.Collections;
+import java.util.List;
 
 public class Preferences {
   public enum RendererBackend {
@@ -14,4 +18,5 @@ public class Preferences {
   public boolean vSync = false;
   public boolean fullscreen = false;
   public boolean debug = false;
+  public List<BaseSystem> ecsSystems = Collections.emptyList();
 }

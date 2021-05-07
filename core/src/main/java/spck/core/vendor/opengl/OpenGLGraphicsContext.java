@@ -5,6 +5,9 @@ import org.lwjgl.opengl.GLUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spck.core.render.GraphicsContext;
+import spck.core.render.Shader;
+import spck.core.render.VertexArray;
+import spck.core.render.VertexBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL.createCapabilities;
@@ -67,6 +70,24 @@ public class OpenGLGraphicsContext implements GraphicsContext {
   @Override
   public void clear() {
     glClear(clearFlags);
+  }
+
+  @Override
+  public void renderRaw(VertexArray vao, Shader shader) {
+    shader.bind();
+    vao.bind();
+
+    if(vao.getIndexBuffer().isPresent()) {
+      glDrawElements(GL_TRIANGLES, vao.getIndexBuffer().get().getLength(), GL_UNSIGNED_INT, 0);
+    }
+    else {
+      for (VertexBuffer buffer : vao.getVertexBuffers()) {
+        glDrawArrays(GL_TRIANGLES, 0, buffer.getLength() / 3);
+      }
+    }
+
+    vao.unbind();
+    shader.unbind();
   }
 
   @Override

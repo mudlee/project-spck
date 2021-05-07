@@ -19,7 +19,7 @@ if(currentOs.isMacOsX) {
 
 application {
     mainModule.set(moduleName)
-    mainClass.set("spck.sandbox.Sandbox")
+    mainClass.set("spck.sandbox.SandboxApplication")
     applicationDefaultJvmArgs = spckJvmArgs
 
     logger.quiet("[SPCK] [application] module: ${mainModule.get()}")

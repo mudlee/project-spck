@@ -14,6 +14,8 @@ public interface GraphicsContext extends Disposable {
 
   void clear();
 
+  void renderRaw(VertexArray vao, Shader shader);
+
   void swapBuffers(float frameTime);
 
   void windowResized(int newWidth, int newHeight);

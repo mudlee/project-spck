@@ -2,21 +2,30 @@ package spck.sandbox;
 
 import spck.core.LifeCycleListener;
 import spck.core.Spck;
+import spck.core.ecs.entities.RawRenderableEntity;
 import spck.core.input.InputMultiplexer;
 import spck.core.input.InputProcessor;
 import spck.core.render.*;
+import spck.core.render.camera.PerspectiveCamera;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 public class SandboxGame implements LifeCycleListener, InputProcessor {
   private final InputMultiplexer inputMultiplexer = new InputMultiplexer();
+  private PerspectiveCamera camera;
+  private Shader shader;
 
   @Override
   public void onCreated() {
     inputMultiplexer.addProcessor(this);
     Spck.input.setMultiplexer(inputMultiplexer);
 
-    Shader shader = Shader.create("triangle.vert", "triangle.frag");
+    camera = new PerspectiveCamera(60f, 0.01f, 1000f);
+    camera.resize(Spck.window.getSize().x, Spck.window.getSize().y);
+
+    shader = Shader.create("basic.vert", "basic.frag");
+    shader.createUniform(shader.getVertexProgramId(), "projectionMatrix");
+    shader.setUniform(shader.getVertexProgramId(), "projectionMatrix", camera.getProjectionMatrix());
 
     int stride = 7 * Float.BYTES;
     VertexBufferLayout layout = new VertexBufferLayout(
@@ -24,13 +33,23 @@ public class SandboxGame implements LifeCycleListener, InputProcessor {
         new VertexLayoutAttribute(1, 4, Spck.types.shader.FLOAT, false, stride, 3 * Float.BYTES)
     );
 
-    VertexArray va1 = VertexArray.create();
+    final var va1 = VertexArray.create();
     va1.addVertexBuffer(VertexBuffer.create(squareColored, layout));
     va1.setIndexBuffer(IndexBuffer.create(squareInd));
 
-    VertexArray va2 = VertexArray.create();
+    final var va2 = VertexArray.create();
     va2.addVertexBuffer(VertexBuffer.create(triVertColored, layout));
     va2.setIndexBuffer(IndexBuffer.create(triInd));
+
+    final var va3 = VertexArray.create();
+    va3.addVertexBuffer(VertexBuffer.create(squareNotIndexedButColored, layout));
+
+    /*final var square = new RawDrawableEntity("square", va1, shader);
+    final var triangle = new RawDrawableEntity("triangle", va2, shader);
+    Spck.ecs.addEntity(triangle);
+    Spck.ecs.addEntity(square);*/
+
+    Spck.ecs.addEntity(new RawRenderableEntity("square",va3, shader));
   }
 
   @Override
@@ -40,47 +59,42 @@ public class SandboxGame implements LifeCycleListener, InputProcessor {
     }
   }
 
-  private static final float[] cubeVertices = {
-      -1.0f, 1.0f, 1.0f, 1f, 0f, 0f, 1f,
-      1.0f, 1.0f, 1.0f, 1f, 0f, 0f, 1f,
-      -1.0f, -1.0f, 1.0f, 1f, 0f, 0f, 1f,
-      1.0f, -1.0f, 1.0f, 1f, 0f, 0f, 1f,
-      -1.0f, 1.0f, -1.0f, 1f, 0f, 0f, 1f,
-      1.0f, 1.0f, -1.0f, 1f, 0f, 0f, 1f,
-      -1.0f, -1.0f, -1.0f, 1f, 0f, 0f, 1f,
-      1.0f, -1.0f, -1.0f, 1f, 0f, 0f, 1f
-  };
+  @Override
+  public void onResize(int width, int height) {
+    camera.resize(width, height);
+  }
 
-  private static final int[] cubeIndices = {
-      0, 1, 2, // 0
-      1, 3, 2,
-      4, 6, 5, // 2
-      5, 6, 7,
-      0, 2, 4, // 4
-      4, 2, 6,
-      1, 5, 3, // 6
-      5, 7, 3,
-      0, 4, 1, // 8
-      4, 5, 1,
-      2, 3, 6, // 10
-      6, 3, 7
-  };
+  @Override
+  public void onUpdate(float delta) {
+    if(camera.update()) {
+      shader.setUniform(shader.getVertexProgramId(), "projectionMatrix", camera.getProjectionMatrix());
+    }
+  }
 
   private static final float[] triVertColored = {
-      -0.5f, -0.5f, 0.0f, 1f, 0f, 0f, 1f,
-      0.5f, -0.5f, 0.0f, 0f, 1f, 0f, 1f,
-      0.0f, 0.5f, 0.0f, 0f, 0f, 1f, 1f,
+      -1f, -1f, -1.5f, 1f, 0f, 0f, 1f,
+      1f, -1f, -1.5f, 0f, 1f, 0f, 1f,
+      0.0f, 1f, -1.5f, 0f, 0f, 1f, 1f,
   };
 
   private static final int[] triInd = {
       0, 1, 2
   };
 
+  private static final float[] squareNotIndexedButColored = {
+    -0.5f, -0.5f, -1.4f,0.2f, 0.5f, 0.5f, 1f,
+    0.5f, -0.5f, -1.4f,0.2f, 0.5f, 0.5f, 1f,
+    0.5f, 0.5f, -1.4f,0.2f, 0.5f, 0.5f, 1f,
+    0.5f, 0.5f, -1.4f,0.2f, 0.5f, 0.5f, 1f,
+    -0.5f, 0.5f, -1.4f,0.2f, 0.5f, 0.5f, 1f,
+    -0.5f, -0.5f, -1.4f,0.2f, 0.5f, 0.5f, 1f,
+  };
+
   private static final float[] squareColored = {
-      -0.5f, -0.5f, 0.0f, 0.2f, 0.5f, 0.5f, 1f,
-      0.5f, -0.5f, 0.0f, 0.2f, 0.5f, 0.5f, 1f,
-      0.5f, 0.5f, 0.0f, 0.2f, 0.5f, 0.5f, 1f,
-      -0.5f, 0.5f, 0.0f, 0.2f, 0.5f, 0.5f, 1f,
+      -0.5f, -0.5f, -1.4f, 0.2f, 0.5f, 0.5f, 1f,
+      0.5f, -0.5f, -1.4f, 0.2f, 0.5f, 0.5f, 1f,
+      0.5f, 0.5f, -1.4f, 0.2f, 0.5f, 0.5f, 1f,
+      -0.5f, 0.5f, -1.4f, 0.2f, 0.5f, 0.5f, 1f,
   };
 
   private static final int[] squareInd = {

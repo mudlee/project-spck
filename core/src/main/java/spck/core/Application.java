@@ -1,13 +1,20 @@
 package spck.core;
 
+import com.artemis.BaseSystem;
 import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spck.core.ecs.ECS;
+import spck.core.ecs.systems.RawRenderableSystem;
 import spck.core.props.Preferences;
 import spck.core.render.Renderer;
 import spck.core.window.Window;
+import spck.core.window.WindowEventListener;
 
-public class Application {
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Application implements WindowEventListener {
   private static final Logger log = LoggerFactory.getLogger(Application.class);
   private final Window window;
   private final LifeCycleListener lifeCycleListener;
@@ -18,9 +25,17 @@ public class Application {
       throw new SpckRuntimeException("Cannot run multiple applications");
     }
     Spck.app = this;
+
     this.lifeCycleListener = lifeCycleListener;
     renderer = new Renderer(preferences.renderBackend, preferences.debug);
-    window = new Window(preferences, renderer);
+
+    final var systems = new ArrayList<BaseSystem>();
+    systems.add(new RawRenderableSystem(renderer));
+    systems.addAll(preferences.ecsSystems);
+    Spck.ecs = new ECS(systems);
+
+    window = new Window(preferences, Arrays.asList(renderer, this));
+    Spck.window = window;
   }
 
   public void start() {
@@ -32,6 +47,7 @@ public class Application {
     loop();
 
     log.info("Application is shutting down");
+    lifeCycleListener.onDispose();
     renderer.dispose();
     window.dispose();
     log.info("Terminated");
@@ -39,6 +55,11 @@ public class Application {
 
   public void stop() {
     window.close();
+  }
+
+  @Override
+  public void onWindowResized(int width, int height) {
+    lifeCycleListener.onResize(width,height);
   }
 
   private void loop() {
@@ -51,10 +72,13 @@ public class Application {
       renderer.clear();
       long now = System.nanoTime();
       long frameTimeNanos = now - lastTime;
-      float frameTime = frameTimeNanos / 1_000_000_000f;
+      float deltaTime = frameTimeNanos / 1_000_000_000f;
       lastTime = now;
 
-      renderer.swapBuffers(frameTime);
+      Spck.ecs.update(deltaTime);
+      lifeCycleListener.onUpdate(deltaTime);
+
+      renderer.swapBuffers(deltaTime);
       window.pollEvents();
     }
   }
