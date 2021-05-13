@@ -27,6 +27,7 @@ public abstract class AbstractCamera implements Camera {
     this.width = width;
     this.height = height;
     projectionMatrixChanged = true;
+    viewMatrixChanged = true;
   }
 
   @Override

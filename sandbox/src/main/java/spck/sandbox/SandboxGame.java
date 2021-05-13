@@ -24,8 +24,10 @@ public class SandboxGame implements LifeCycleListener, InputProcessor {
     camera.resize(Spck.window.getSize().x, Spck.window.getSize().y);
 
     shader = Shader.create("basic.vert", "basic.frag");
-    shader.createUniform(shader.getVertexProgramId(), "projectionMatrix");
-    shader.setUniform(shader.getVertexProgramId(), "projectionMatrix", camera.getProjectionMatrix());
+    shader.createUniform(shader.getVertexProgramId(), Shader.UNIFORM_PROJ_MAT);
+    shader.createUniform(shader.getVertexProgramId(), Shader.UNIFORM_VIEW_MAT);
+    shader.setUniform(shader.getVertexProgramId(), Shader.UNIFORM_PROJ_MAT, camera.getProjectionMatrix());
+    shader.setUniform(shader.getVertexProgramId(), Shader.UNIFORM_VIEW_MAT, camera.getViewMatrix());
 
     int stride = 7 * Float.BYTES;
     VertexBufferLayout layout = new VertexBufferLayout(
@@ -67,7 +69,8 @@ public class SandboxGame implements LifeCycleListener, InputProcessor {
   @Override
   public void onUpdate(float delta) {
     if(camera.update()) {
-      shader.setUniform(shader.getVertexProgramId(), "projectionMatrix", camera.getProjectionMatrix());
+      shader.setUniform(shader.getVertexProgramId(), Shader.UNIFORM_PROJ_MAT, camera.getProjectionMatrix());
+      shader.setUniform(shader.getVertexProgramId(), Shader.UNIFORM_VIEW_MAT, camera.getViewMatrix());
     }
   }
 

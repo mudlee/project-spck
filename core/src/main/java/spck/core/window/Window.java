@@ -114,6 +114,10 @@ public class Window implements Disposable {
     return size;
   }
 
+  public int getScreenPixelRatio() {
+    return screenPixelRatio;
+  }
+
   private GLFWVidMode pickMonitor() {
     final var buffer = glfwGetMonitors();
 

@@ -48,13 +48,14 @@ sourceSets.main.get().resources.srcDirs(resourcesPath)
 
 dependencies {
     api(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
-
     implementation("org.lwjgl", "lwjgl")
     api("org.lwjgl", "lwjgl-glfw")
     implementation("org.lwjgl", "lwjgl-opengl")
+    implementation("org.lwjgl", "lwjgl-nanovg")
     implementation("org.lwjgl", "lwjgl", classifier = lwjglNatives)
     implementation("org.lwjgl", "lwjgl-glfw", classifier = lwjglNatives)
     implementation("org.lwjgl", "lwjgl-opengl", classifier = lwjglNatives)
+    implementation("org.lwjgl", "lwjgl-nanovg", classifier = lwjglNatives)
     api("net.onedaybeard.artemis","artemis-odb", artemisVersion)
     api("org.joml", "joml", jomlVersion)
     implementation("org.slf4j", "slf4j-api", slf4jVersion)

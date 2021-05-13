@@ -5,6 +5,8 @@ module spck.core {
     requires org.lwjgl.opengl.natives;
     requires transitive org.lwjgl.glfw;
     requires org.lwjgl.glfw.natives;
+    requires org.lwjgl.nanovg;
+    requires org.lwjgl.nanovg.natives;
     requires artemis.odb;
     requires transitive org.joml;
     requires org.slf4j;
