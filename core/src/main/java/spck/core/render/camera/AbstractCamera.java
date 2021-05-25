@@ -27,7 +27,6 @@ public abstract class AbstractCamera implements Camera {
     this.width = width;
     this.height = height;
     projectionMatrixChanged = true;
-    viewMatrixChanged = true;
   }
 
   @Override
@@ -57,6 +56,7 @@ public abstract class AbstractCamera implements Camera {
   @Override
   public void setPosition(Vector3f position) {
     this.position.set(position);
+    viewMatrixChanged = true;
   }
 
   @Override

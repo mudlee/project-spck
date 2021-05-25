@@ -1,15 +1,15 @@
 package spck.core.render;
 
 public class VertexLayoutAttribute {
-    private final int position;
+    private final int index;
     private final int dataSize;
     private final int dataType;
     private final int stride;
     private final int offset;
     private final boolean normalized;
 
-    public VertexLayoutAttribute(int position, int dataSize, int dataType, boolean normalized, int stride, int offset) {
-        this.position = position;
+    public VertexLayoutAttribute(int index, int dataSize, int dataType, boolean normalized, int stride, int offset) {
+        this.index = index;
         this.dataSize = dataSize;
         this.dataType = dataType;
         this.normalized = normalized;
@@ -17,8 +17,8 @@ public class VertexLayoutAttribute {
         this.offset = offset;
     }
 
-    public int getPosition() {
-        return position;
+    public int getIndex() {
+        return index;
     }
 
     public int getDataSize() {

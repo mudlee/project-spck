@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 import spck.core.render.VertexBuffer;
 import spck.core.render.VertexBufferLayout;
 
-import java.nio.FloatBuffer;
-
 import static org.lwjgl.opengl.GL41.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
@@ -22,7 +20,7 @@ public class OpenGLVertexBuffer extends VertexBuffer {
             length = vertices.length;
             id = glGenBuffers();
             bind();
-            FloatBuffer buffer = stack.callocFloat(vertices.length).put(vertices).flip();
+            final var buffer = stack.callocFloat(vertices.length).put(vertices).flip();
             glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
             unbind();
             log.debug("VertexBuffer created {}", id);

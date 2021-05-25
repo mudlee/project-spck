@@ -2,10 +2,7 @@ package spck.core.vendor.opengl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spck.core.render.IndexBuffer;
-import spck.core.render.VertexArray;
-import spck.core.render.VertexBuffer;
-import spck.core.render.VertexLayoutAttribute;
+import spck.core.render.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +15,8 @@ public class OpenGLVertexArray extends VertexArray {
 	private final int id;
 	private final List<VertexBuffer> vertexBuffers = new ArrayList<>();
 	private IndexBuffer indexBuffer;
+	private int instanceCount;
+	private boolean instanced;
 
 	public OpenGLVertexArray() {
 		id = glGenVertexArrays();
@@ -45,18 +44,21 @@ public class OpenGLVertexArray extends VertexArray {
 		}
 
 		buffer.bind();
-		int index = 0;
-		for (VertexLayoutAttribute attribute : buffer.getLayout().getAttributes()) {
-			glEnableVertexAttribArray(index);
+		for (VertexLayoutAttribute attribute : buffer.getLayout().attributes()) {
+			glEnableVertexAttribArray(attribute.getIndex());
 			glVertexAttribPointer(
-					attribute.getPosition(),
-					attribute.getDataSize(),
-					attribute.getDataType(),
-					attribute.isNormalized(),
-					attribute.getStride(),
-					attribute.getOffset()
+				attribute.getIndex(),
+				attribute.getDataSize(),
+				attribute.getDataType(),
+				attribute.isNormalized(),
+				attribute.getStride(),
+				attribute.getOffset()
 			);
-			index++;
+
+			if(attribute instanceof VertexLayoutInstancedAttribute instancedAttribute) {
+				glVertexAttribDivisor(attribute.getIndex(), instancedAttribute.getDivisor());
+				instanced = true;
+			}
 		}
 		buffer.unbind();
 		unbind();
@@ -73,6 +75,11 @@ public class OpenGLVertexArray extends VertexArray {
 	}
 
 	@Override
+	public void setInstanceCount(int count) {
+		instanceCount = count;
+	}
+
+	@Override
 	public List<VertexBuffer> getVertexBuffers() {
 		return vertexBuffers;
 	}
@@ -80,6 +87,16 @@ public class OpenGLVertexArray extends VertexArray {
 	@Override
 	public Optional<IndexBuffer> getIndexBuffer() {
 		return Optional.ofNullable(indexBuffer);
+	}
+
+	@Override
+	public int getInstanceCount() {
+		return instanceCount;
+	}
+
+	@Override
+	public boolean isInstanced() {
+		return instanced;
 	}
 
 	@Override

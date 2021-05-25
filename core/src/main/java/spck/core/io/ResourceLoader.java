@@ -6,8 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
@@ -18,17 +16,17 @@ public class ResourceLoader {
     public static ByteBuffer loadToByteBuffer(String path, MemoryStack stack){
         log.debug("Loading resource {}", path);
         try {
-            URL url = ResourceLoader.class.getResource(path);
+            final var url = ResourceLoader.class.getResource(path);
 
             if (url == null) {
                 throw new RuntimeException("Resource not found: " + path);
             }
 
-            int resourceSize = url.openConnection().getContentLength();
+            final var resourceSize = url.openConnection().getContentLength();
 
             log.debug("Loading resource '{}' ({}bytes)", url.getFile(), resourceSize);
 
-            ByteBuffer resource = stack.calloc(resourceSize);
+            final var resource = stack.calloc(resourceSize);
 
             try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
                 int b;
@@ -51,11 +49,11 @@ public class ResourceLoader {
 
     public static String load(String path) {
         log.debug("Loading resource {}", path);
-        InputStream in = ResourceLoader.class.getResourceAsStream(path);
+        final var in = ResourceLoader.class.getResourceAsStream(path);
         if(in == null) {
             throw new RuntimeException("Could not find resource: "+path);
         }
-        Scanner scanner = new Scanner(in, StandardCharsets.UTF_8);
+        final var scanner = new Scanner(in, StandardCharsets.UTF_8);
         return scanner.useDelimiter("\\A").next();
     }
 }

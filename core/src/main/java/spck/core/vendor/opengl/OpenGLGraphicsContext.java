@@ -77,12 +77,21 @@ public class OpenGLGraphicsContext implements GraphicsContext {
     shader.bind();
     vao.bind();
 
-    if(vao.getIndexBuffer().isPresent()) {
-      glDrawElements(GL_TRIANGLES, vao.getIndexBuffer().get().getLength(), GL_UNSIGNED_INT, 0);
+    if(vao.isInstanced()) {
+      if (vao.getIndexBuffer().isPresent()) {
+        glDrawElementsInstanced(GL_TRIANGLES, vao.getIndexBuffer().get().getLength(), GL_UNSIGNED_INT, 0, vao.getInstanceCount());
+      }
+      else {
+        //glDrawArraysInstanced(); // TODO
+      }
     }
     else {
-      for (VertexBuffer buffer : vao.getVertexBuffers()) {
-        glDrawArrays(GL_TRIANGLES, 0, buffer.getLength() / 3);
+      if (vao.getIndexBuffer().isPresent()) {
+        glDrawElements(GL_TRIANGLES, vao.getIndexBuffer().get().getLength(), GL_UNSIGNED_INT, 0);
+      } else {
+        for (VertexBuffer buffer : vao.getVertexBuffers()) {
+          glDrawArrays(GL_TRIANGLES, 0, buffer.getLength() / 3);
+        }
       }
     }
 

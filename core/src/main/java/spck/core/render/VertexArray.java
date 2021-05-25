@@ -23,9 +23,15 @@ public abstract class VertexArray {
 
     public abstract void setIndexBuffer(IndexBuffer indexBuffer);
 
+    public abstract void setInstanceCount(int count);
+
     public abstract List<VertexBuffer> getVertexBuffers();
 
     public abstract Optional<IndexBuffer> getIndexBuffer();
+
+    public abstract int getInstanceCount();
+
+    public abstract boolean isInstanced();
 
     public abstract void dispose();
 }
